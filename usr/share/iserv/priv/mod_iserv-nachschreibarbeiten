@@ -1,0 +1,7 @@
+mod_nachschreibarbeiten_access:
+module Nachschreibarbeiten
+description Access the Nachschreibarbeiten module
+
+mod_nachschreibarbeiten_admin:
+module Nachschreibarbeiten
+description Administration of the Nachschreibarbeiten module

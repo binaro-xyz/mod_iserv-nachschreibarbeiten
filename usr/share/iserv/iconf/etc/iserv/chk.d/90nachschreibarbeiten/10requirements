@@ -1,0 +1,1 @@
+Shell "exam-plan module is required for mod_iserv-nachschreibarbeiten. Check for exam-plan" [ -f /usr/share/iserv/priv/exam-plan ]

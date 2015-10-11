@@ -1,0 +1,8 @@
+msgid "Nachschreibarbeiten"
+msgstr "Nachschreibarbeiten"
+
+msgid "Administration of the Nachschreibarbeiten module"
+msgstr "Administration des Nachschreibarbeitenmoduls"
+
+msgid "Access the Nachschreibarbeiten module"
+msgstr "Auf das Nachschreibarbeitenmodul zugreifen"
