@@ -10,22 +10,38 @@ jquery_ui_head('combobox');
 css_include('style.css');
 PageBlue('Bearbeiten', 'manage');
 
-if(@$_POST['action'] == 'update') {
-    require_once 'format.inc';
-    switch($_POST['type']) {
-        case 'date':
-            $query = 'UPDATE mod_nachschreibarbeiten_dates SET date=' . qdb($_POST['date']) . ', time=' . qdb($_POST['time']) . ', room=' . qdb($_POST['room']) . ', teacher_act=' . qdb($_POST['teacher']) . ' WHERE id=' . qdb($_POST['id']);
-            $old_date = db_getRow('SELECT * FROM mod_nachschreibarbeiten_dates WHERE id = ' . qdb($_POST['id']));
-            if(db_query($query)) {
-                log_insert('Nachschreibtermin geändert. Neue Daten: ' . strip_tags($_POST['date']) . ' um ' . strip_tags($_POST['time']) . ' mit Betreuer_in ' . ActToName(($_POST['teacher'])) . ' in Raum "' . strip_tags($_POST['room']) .  '". Alte Daten: '  . getLocalizedFormattedDate($old_date['date'], '%Y-%m-%d') . ' um ' . strip_tags($old_date['time']) . ' mit Betreuer_in ' . ActToName(($old_date['teacher_act'])) . ' in Raum "' . strip_tags($old_date['room']) .  '".', null, 'Nachschreibarbeiten');
-                Info('Nachschreibtermin erfolgreich eingetragen.');
-                js('window.close();');
-            }
-            else {
-                Error('Fehler beim Bearbeiten des Nachschreibtermins.<br><a href="javascript:window.close();">Schließen</a>');
+if(!empty($_POST['action'])) {
+    switch($_POST['action']) {
+        case 'update':
+            require_once 'format.inc';
+            switch ($_POST['type']) {
+                case 'date':
+                    $query = 'UPDATE mod_nachschreibarbeiten_dates SET date=' . qdb($_POST['date']) . ', time=' . qdb($_POST['time']) . ', room=' . qdb($_POST['room']) . ', teacher_act=' . qdb($_POST['teacher']) . ' WHERE id=' . qdb($_POST['id']);
+                    $old_date = db_getRow('SELECT * FROM mod_nachschreibarbeiten_dates WHERE id = ' . qdb($_POST['id']));
+                    if (db_query($query)) {
+                        log_insert('Nachschreibtermin geändert. Neue Daten: ' . strip_tags($_POST['date']) . ' um ' . strip_tags($_POST['time']) . ' mit Betreuer_in ' . ActToName(($_POST['teacher'])) . ' in Raum "' . strip_tags($_POST['room']) . '". Alte Daten: ' . getLocalizedFormattedDate($old_date['date'], '%Y-%m-%d') . ' um ' . strip_tags($old_date['time']) . ' mit Betreuer_in ' . ActToName(($old_date['teacher_act'])) . ' in Raum "' . strip_tags($old_date['room']) . '".', null, 'Nachschreibarbeiten');
+                        Info('Nachschreibtermin erfolgreich eingetragen.');
+                        js('window.close();');
+                    } else {
+                        Error('Fehler beim Bearbeiten des Nachschreibtermins.<br><a href="javascript:window.close();">Schließen</a>');
+                    }
+                    break;
+                case 'entry':
+                    break;
+                default:
+                    Error('Ungültige Anfrage.');
+                    break;
             }
             break;
-        case 'entry':
+        case 'delete':
+            $query = 'DELETE FROM mod_nachschreibarbeiten_dates WHERE id=' . qdb($_POST['id']);
+            if (db_query($query)) {
+                log_insert('Nachschreibtermin ' . strip_tags($_POST['id']) . ' gelöscht.', null, 'Nachschreibarbeiten');
+                Info('Nachschreibtermin erfolgreich gelöscht.');
+                js('window.close();');
+            } else {
+                Error('Fehler beim Löschen des Nachschreibtermins.<br><a href="javascript:window.close();">Schließen</a>');
+            }
             break;
         default:
             Error('Ungültige Anfrage.');
@@ -68,6 +84,12 @@ switch($type) {
                 <input type="hidden" name="action" value="update">
                 <input type="hidden" name="type" value="date">
                 <input type="submit">
+            </form>
+            <form method="post" action="#">
+                <input type="hidden" name="id" value="<?php echo $date['id']; ?>">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="type" value="date">
+                <input type="submit" value="Löschen">
             </form>
             <?php
         }

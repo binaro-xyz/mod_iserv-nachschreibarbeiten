@@ -30,3 +30,4 @@ GRANT SELECT, REFERENCES ON groups TO nachschreibarbeiten;
 GRANT SELECT ON members TO nachschreibarbeiten;
 GRANT SELECT ON groups_priv TO nachschreibarbeiten;
 GRANT INSERT ON log TO nachschreibarbeiten;
+GRANT SELECT ON exam_plan TO nachschreibarbeiten;

@@ -31,7 +31,7 @@ $dates = db_getAll('SELECT * FROM mod_nachschreibarbeiten_dates WHERE date >= cu
 
 <table class="display-table">
     <thead>
-    <td>Wochentag</td><td>Datum</td><td>Uhrzeit</td><td>Raum</td><td>Betreuer</td><td></td>
+    <td>Wochentag</td><td>Datum</td><td>Uhrzeit</td><td>Raum</td><td>Betreuer_in</td><td></td>
     </thead>
     <tbody>
         <?php
