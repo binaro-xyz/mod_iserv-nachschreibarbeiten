@@ -7,3 +7,7 @@ td, th {
     padding: 0.2rem !important;
     text-align: left !important;
 }
+
+td.edit_icon {
+    display: none;
+}
