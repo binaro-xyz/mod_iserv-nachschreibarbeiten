@@ -21,10 +21,10 @@ foreach($dates as $date) {
             <tbody>
                 <?php
                 foreach ($entries as $entry) {
-                    echo '<tr><td>' . ActToName($entry['student_act']) . '</td><td>' . strip_tags($entry['class']) . '</td><td>' . strip_tags($entry['subject']) . '</td><td>' . strip_tags($entry['additional_material']) . '</td><td>' . strip_tags($entry['duration']) . '</td><td>' . ActToName($entry['teacher_act']) . '</td><td>' . popup('edit.php?type=entry&id=' . $entry['id'], 360, 330, icon('manage'))  . '</a></td></tr>';
+                    echo '<tr><td>' . ActToName($entry['student_act']) . '</td><td>' . strip_tags($entry['class']) . '</td><td>' . strip_tags($entry['subject']) . '</td><td>' . strip_tags($entry['additional_material']) . '</td><td>' . strip_tags($entry['duration']) . '</td><td>' . ActToName($entry['teacher_act']) . '</td><td>' . (userCanEdit($entry) ? popup('edit.php?type=entry&id=' . $entry['id'], 360, 330, icon('manage')) : '') . '</td></tr>';
                 } ?>
             </tbody>
         </table>
         <?php
     }
-} ?>
+}
