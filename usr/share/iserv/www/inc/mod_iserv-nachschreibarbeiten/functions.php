@@ -19,6 +19,16 @@ function userCanEdit($data) {
     return $data['created_by_act'] == $_SESSION['act'];
 }
 
+// returns true if the Nachschreibtermin at $date collides with another test or Nachschreibtermin for $student_act
+function isCollision($date, $student_act) {
+    $query = 'SELECT
+(SELECT COUNT(*) FROM exam_plan WHERE exam_plan.actgrp = ANY((SELECT array_agg(distinct members.actgrp) FROM members WHERE members.actuser=' . qdb($student_act) . ')::text[]) AND EXTRACT(WEEK FROM exam_plan.date) = EXTRACT(WEEK FROM TIMESTAMP ' . qdb($date) . ') AND EXTRACT(YEAR FROM exam_plan.date) = EXTRACT(YEAR FROM TIMESTAMP ' . qdb($date) . ')) AS week_count,
+(SELECT COUNT(*) AS day_count FROM exam_plan WHERE exam_plan.actgrp = ANY((SELECT array_agg(distinct members.actgrp) FROM members WHERE members.actuser=' . qdb($student_act) . ')::text[]) AND exam_plan.date = ' . qdb($date) . ') AS day_count,
+(SELECT COUNT(*) FROM mod_nachschreibarbeiten_entries WHERE student_act = ' . qdb($student_act) . ' AND mod_nachschreibarbeiten_entries.date_id = (SELECT mod_nachschreibarbeiten_dates.id FROM mod_nachschreibarbeiten_dates WHERE date=' . qdb($date) . ')) AS entry_count;';
+    $conflicts = db_getRow($query);
+    return $conflicts['day_count'] < 1 && $conflicts['week_count'] < 3 && $conflicts['entry_count'] < 1;
+}
+
 // Unfortunately, IServ doesn't seem to have a function that escapes values to be inserted into the DB (or I just can't find it...)
 // They do have a function qdb() that escapes a value and adds quotes around it (presumably for easier SELECT statements, their db_store() also inserts quotes though...)
 // We use this function here but remove the quotes with trim().

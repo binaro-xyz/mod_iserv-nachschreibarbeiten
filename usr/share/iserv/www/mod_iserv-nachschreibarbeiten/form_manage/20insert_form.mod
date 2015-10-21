@@ -10,14 +10,14 @@ $sel_teachers = db_getHash(
 	 AND p.privilege IN (\'mod_nachschreibarbeiten_access\', \'mod_nachschreibarbeiten_admin\')
    ORDER BY u.act'
 );
-$teacher_select = combo('teacher', $_SESSION['act'], $sel_teachers, array('width' => '144px'), true);
+$teacher_select = combo('teacher', $_SESSION['act'], $sel_teachers, array('width' => '200px'), true);
 ?>
 
 <form method="post" action="#">
 	<<?php echo $GLOBALS["padtbl"]; ?>>
-	<tr><td>Datum:</td><td><input type="date" name="date" value="<?php echo date('o-m-d'); ?>" style="width: 144px;"></td></tr> <!-- TODO: Automatically pick the next Friday -->
-	<tr><td>Uhrzeit:</td><td><input type="time" name="time" value="14:00" style="width: 144px;"></td></tr>
-	<tr><td>Raum:</td><td><input type="text" name="room" value="151"></td></tr>
+	<tr><td>Datum:</td><td><input type="date" name="date" value="<?php echo date('o-m-d'); ?>" style="width: 200px;"></td></tr> <!-- TODO: Automatically pick the next Friday -->
+	<tr><td>Uhrzeit:</td><td><input type="time" name="time" value="14:00" style="width: 200px;"></td></tr>
+	<tr><td>Raum:</td><td><input type="text" name="room" value="151" style="width: 200px;"></td></tr>
 	<tr><td>Betreuer_in:</td><td><?php echo $teacher_select; ?></td></tr>
 	</table>
     <input type="submit">

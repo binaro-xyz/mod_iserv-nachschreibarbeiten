@@ -125,13 +125,13 @@ switch($type) {
     case 'date':
         $date = db_getRow('SELECT * FROM mod_nachschreibarbeiten_dates WHERE id = ' . qdb($id));
         if(userCanEdit($date)) {
-            $teacher_select = combo('teacher', $date['teacher_act'], $sel_teachers, array('width' => '144px'), true);
+            $teacher_select = combo('teacher', $date['teacher_act'], $sel_teachers, array('width' => '200px'), true);
             ?>
             <form method="post" action="#">
                 <<?php echo $GLOBALS["padtbl"]; ?>>
-                <tr><td>Datum:</td><td><input type="date" name="date" value="<?php echo getLocalizedFormattedDate($date['date'], '%Y-%m-%d'); ?>" style="width: 144px;"></td></tr> <!-- TODO: Automatically pick the next Friday -->
-                <tr><td>Uhrzeit:</td><td><input type="time" name="time" value="<?php echo $date['time']; ?>" style="width: 144px;"></td></tr>
-                <tr><td>Raum:</td><td><input type="text" name="room" value="<?php echo $date['room']; ?>"></td></tr>
+                <tr><td>Datum:</td><td><input type="date" name="date" value="<?php echo getLocalizedFormattedDate($date['date'], '%Y-%m-%d'); ?>" style="width: 200px;"></td></tr> <!-- TODO: Automatically pick the next Friday -->
+                <tr><td>Uhrzeit:</td><td><input type="time" name="time" value="<?php echo $date['time']; ?>" style="width: 200px;"></td></tr>
+                <tr><td>Raum:</td><td><input type="text" name="room" value="<?php echo $date['room']; ?>" style="width: 200px;"></td></tr>
                 <tr><td>Betreuer:</td><td><?php echo $teacher_select; ?></td></tr>
                 </table>
                 <input type="hidden" name="id" value="<?php echo $date['id']; ?>">
@@ -154,21 +154,22 @@ switch($type) {
     case 'entry':
         $entry = db_getRow('SELECT * FROM mod_nachschreibarbeiten_entries WHERE id = ' . qdb($id));
         if(userCanEdit($entry)) {
-            $teacher_select = combo('teacher', $entry['teacher_act'], $sel_teachers, array('width' => '144px'), true);
-            $student_select = combo('student', $entry['student_act'], $sel_students, array('width' => '144px'), true);
+            $teacher_select = combo('teacher', $entry['teacher_act'], $sel_teachers, array('width' => '200px'), true);
+            $student_select = combo('student', $entry['student_act'], $sel_students, array('width' => '200px'), true);
             $date_select = '';
+            // Why don't we use the IServ select() function here?
             foreach($sel_dates as $date) {
                 $date_select .= '<option value="' . strip_tags($date['id']) . '"' . ($date['id'] === $entry['date_id'] ? ' selected="selected"' : '') . '>' . getLocalizedFormattedDate($date['date'], '%A') . ', den ' . getLocalizedFormattedDate($date['date'], '%d. %B %Y') . '</option>';
             }
             ?>
             <form method="post" action="#">
                 <<?php echo $GLOBALS["padtbl"]; ?>>
-                <tr><td>Datum:</td><td><select name="date"><?php echo $date_select?></select></td></tr>
+                <tr><td>Datum:</td><td><select name="date" style="width: 200px;"><?php echo $date_select?></select></td></tr>
                 <tr><td>Name der Schüler_in:</td><td><?php echo $student_select; ?></td></tr>
-                <tr><td>Klasse:</td><td><input type="text" name="student_class" value="<?php echo $entry['class']; ?>"></td></tr>
-                <tr><td>Fach:</td><td><input type="text" name="subject" value="<?php echo $entry['subject']; ?>"></td></tr>
-                <tr><td>Zusatzmaterialien:</td><td><input type="text" name="additional_material" value="<?php echo $entry['additional_material']; ?>"></td></tr>
-                <tr><td>Dauer (in Minuten):</td><td><input type="number" name="duration" value="<?php echo $entry['duration']; ?>"></td></tr>
+                <tr><td>Klasse:</td><td><input type="text" name="student_class" value="<?php echo $entry['class']; ?>" style="width: 200px;"></td></tr>
+                <tr><td>Fach:</td><td><input type="text" name="subject" value="<?php echo $entry['subject']; ?>" style="width: 200px;"></td></tr>
+                <tr><td>Zusatzmaterialien:</td><td><input type="text" name="additional_material" value="<?php echo $entry['additional_material']; ?>" style="width: 200px;"></td></tr>
+                <tr><td>Dauer (in Minuten):</td><td><input type="number" name="duration" value="<?php echo $entry['duration']; ?>" style="width: 200px;"></td></tr>
                 <tr><td>Lehrkraft:</td><td><?php echo $teacher_select; ?></td></tr>
                 </table>
                 <input type="hidden" name="id" value="<?php echo $entry['id']; ?>">
