@@ -8,18 +8,18 @@ require_once 'db.inc';
 require_once 'mod_iserv-nachschreibarbeiten/functions.php';
 
 db_user('nachschreibarbeiten');
-
-jquery_ui_head('combobox');
 css_include('style.css');
-PageBlue('Nachschreiber_innen', 'calendar');
+css_include('style_print.css');
 
 if(!userHasAccess()) {
-    printf("<p class='err'>Fehler: Zugriff verweigert.</p>\n");
-    _PageBlue();
-    exit();
+    Error('Fehler: Zugriff verweigert.');
+    die;
 }
 
-mountspc('form_nachschreiber');
+page_open();
 
-jquery_combobox();
-_PageBlue();
+include __DIR__ . '/form_nachschreiber/30list.mod';
+echo '<hr><p>Ausdruck vom ' . getLocalizedFormattedDate(date(''), '%d. %B %Y um %H:%M:%S') . '</p>';
+
+js('window.print();');
+page_close();

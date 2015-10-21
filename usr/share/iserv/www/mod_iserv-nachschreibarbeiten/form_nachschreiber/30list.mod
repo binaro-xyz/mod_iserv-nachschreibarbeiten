@@ -1,10 +1,15 @@
 <?php
 $dates = db_getAll('SELECT * FROM mod_nachschreibarbeiten_dates WHERE date >= current_date ORDER BY date ASC');
-?>
 
-<h1>Nachschreiber_innen</h1>
+echo '<h1>Nachschreiber_innen</h1>';
 
-<?php
+if(basename($_SERVER['REQUEST_URI']) == 'print.php') {
+    echo '<a href="javascript:window.print();" style="float: right;">' . icon('printer') . ' Drucken</a>';
+}
+else {
+    echo popup('print.php', 800, 600, icon('printer') . ' Drucken', false, 'style="float: right;"');
+}
+
 foreach($dates as $date) {
     $entries = db_getAll('SELECT * FROM mod_nachschreibarbeiten_entries WHERE date_id = ' . qdb($date['id']));
     if(count($entries) > 0) {
