@@ -81,7 +81,7 @@ $dates = db_getAll('SELECT * FROM mod_nachschreibarbeiten_dates WHERE date >= cu
                   echo '<option value="' . strip_tags($date['id']) . '">' . getLocalizedFormattedDate($date['date'], '%A') . ', den ' . getLocalizedFormattedDate($date['date'], '%d. %B %Y') . '</option>';
               }
               ?>
-          </select></td></tr> <!-- TODO: Test!! -->
+          </select></td></tr>
   <tr><td>Name der Schüler_in:</td><td><?php echo $student_select; ?></td></tr>
   <tr><td>Klasse:</td><td><input type="text" name="student_class"></td></tr> <!-- Note: Unfortunately, IServ doesn't know the class of a student -->
   <tr><td>Fach:</td><td><input type="text" name="subject"></td></tr>

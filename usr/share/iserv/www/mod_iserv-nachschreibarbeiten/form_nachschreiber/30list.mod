@@ -19,13 +19,10 @@ foreach($dates as $date) {
             <td>Lehrkraft</td>
             </thead>
             <tbody>
-            <tr>
-                <!-- TODO: Actually fill this -->
                 <?php
                 foreach ($entries as $entry) {
-                    echo '<td>' . ActToName($entry['student_act']) . '</td><td>' . strip_tags($entry['class']) . '</td><td>' . strip_tags($entry['subject']) . '</td><td>' . strip_tags($entry['additional_material']) . '</td><td>' . strip_tags($entry['duration']) . '</td><td>' . ActToName($entry['teacher_act']) . '</td><td>' . popup('edit.php?type=entry&id=' . $date['id'], 320, 240, icon('manage'))  . '</a></td>';
+                    echo '<tr><td>' . ActToName($entry['student_act']) . '</td><td>' . strip_tags($entry['class']) . '</td><td>' . strip_tags($entry['subject']) . '</td><td>' . strip_tags($entry['additional_material']) . '</td><td>' . strip_tags($entry['duration']) . '</td><td>' . ActToName($entry['teacher_act']) . '</td><td>' . popup('edit.php?type=entry&id=' . $entry['id'], 360, 330, icon('manage'))  . '</a></td></tr>';
                 } ?>
-            </tr>
             </tbody>
         </table>
         <?php
