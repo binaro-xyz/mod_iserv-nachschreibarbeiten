@@ -30,8 +30,8 @@ if(!empty($_POST['date'])) {
         );
 
         require_once 'sec/login.inc';
-        if(db_store('mod_nachschreibarbeiten_entries', $data)) {
-            log_insert('Nachschreiber_in ' . ActToName($_POST['student']) . ' für Termin ' . strip_tags($date['date']) . ' hinzugefügt', null, 'Nachschreibarbeiten');
+        if($res = db_store('mod_nachschreibarbeiten_entries', $data)) {
+            log_insert('Nachschreiber_in für Termin ' . $data['date_id'] . ' hinzugefügt: ' . ActToName($_POST['student']) . ', Klasse: ' . strip_tags($data['class']) . ', Fach: "' . strip_tags($data['subject']) . '", Zusatzmaterialien: "' . strip_tags($data['additional_material']) . '", Dauer: ' . strip_tags($data['duration']) . ' Minuten, Lehrkraft: ' . ActToName($data['teacher_act']), null, 'Nachschreibarbeiten');
             Info('Nachschreiber_in erfolgreich eingetragen.');
         }
         else {

@@ -4,10 +4,10 @@ $dates = db_getAll('SELECT * FROM mod_nachschreibarbeiten_dates WHERE date >= cu
 echo '<h1>Nachschreiber_innen</h1>';
 
 if(basename($_SERVER['REQUEST_URI']) == 'print.php') {
-    echo '<a href="javascript:window.print();" style="float: right;">' . icon('printer') . ' Drucken</a>';
+    echo '<a href="javascript:window.print();" style="float: right;">' . icon('printer') . 'Drucken</a>';
 }
 else {
-    echo popup('print.php', 800, 600, icon('printer') . ' Drucken', false, 'style="float: right;"');
+    echo popup('print.php', 800, 600, icon('printer') . 'Drucken', false, 'style="float: right;"');
 }
 
 foreach($dates as $date) {

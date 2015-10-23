@@ -3,6 +3,7 @@ require_once 'share.inc';
 require_once 'ctrl.inc';
 require_once 'db.inc';
 require_once 'sec/secure.inc';
+require_once 'format.inc';
 require_once 'mod_iserv-nachschreibarbeiten/functions.php';
 db_user('nachschreibarbeiten');
 
@@ -13,7 +14,6 @@ PageBlue('Bearbeiten', 'manage');
 if(!empty($_POST['action'])) {
     switch($_POST['action']) {
         case 'update':
-            require_once 'format.inc';
             switch ($_POST['type']) {
                 case 'date':
                     $query = 'UPDATE mod_nachschreibarbeiten_dates SET date=' . qdb($_POST['date']) . ', time=' . qdb($_POST['time']) . ', room=' . qdb($_POST['room']) . ', teacher_act=' . qdb($_POST['teacher']) . ' WHERE id=' . qdb($_POST['id']);
@@ -23,7 +23,9 @@ if(!empty($_POST['action'])) {
                         die;
                     }
                     if (db_query($query)) {
-                        log_insert('Nachschreibtermin geändert. Neue Daten: ' . strip_tags($_POST['date']) . ' um ' . strip_tags($_POST['time']) . ' mit Betreuer_in ' . ActToName(($_POST['teacher'])) . ' in Raum "' . strip_tags($_POST['room']) . '". Alte Daten: ' . getLocalizedFormattedDate($old_date['date'], '%Y-%m-%d') . ' um ' . strip_tags($old_date['time']) . ' mit Betreuer_in ' . ActToName(($old_date['teacher_act'])) . ' in Raum "' . strip_tags($old_date['room']) . '".', null, 'Nachschreibarbeiten');
+                        log_insert('Nachschreibtermin geändert. Neue Daten: ' . strip_tags($_POST['date']) . ' um ' . getLocalizedFormattedDate($_POST['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($_POST['teacher'])) . ' in Raum "' . strip_tags($_POST['room']) . '". '
+                            . 'Alte Daten: ' . getLocalizedFormattedDate($old_date['date'], '%Y-%m-%d') . ' um ' . getLocalizedFormattedDate($old_date['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($old_date['teacher_act'])) . ' in Raum "' . strip_tags($old_date['room']) . '".',
+                            null, 'Nachschreibarbeiten');
                         Info('Nachschreibtermin erfolgreich eingetragen.');
                         js('window.close();');
                     } else {
@@ -38,7 +40,10 @@ if(!empty($_POST['action'])) {
                     }
                     $query = 'UPDATE mod_nachschreibarbeiten_entries SET date_id=' . qdb($_POST['date']) . ', student_act=' . qdb($_POST['student']) . ', class=' . qdb($_POST['student_class']) . ', subject=' . qdb($_POST['subject']) . ', additional_material=' . qdb($_POST['additional_material']) . ', duration=' . qdb($_POST['duration']) . ', teacher_act=' . qdb($_POST['teacher']) . ' WHERE id = ' . qdb($_POST['id']);
                     if (db_query($query)) {
-                        log_insert('Nachschreiber_in ' . ActToName($_POST['student']) . ' für Termin ' . strip_tags($_POST['date']) . ' geändert.', null, 'Nachschreibarbeiten');
+                        log_insert('Nachschreiber_in geändert. Neue Daten: ' . ActToName(strip_tags($_POST['student'])) . ' für Termin ' . strip_tags($_POST['date']) . ', Klasse: ' . strip_tags($_POST['student_class']) . ', Fach: "' . strip_tags($_POST['subject']) . '", Zusatzmaterialien: "' . strip_tags($_POST['additional_material']) . '", Dauer: ' . strip_tags($_POST['duration']) . ' Minuten, Lehrkraft: ' . ActToName($_POST['teacher']) . '.'
+                            . ' Alte Daten: ' . ActToName(strip_tags($old_entry['student_act'])) . ' für Termin ' . strip_tags($old_entry['date_id']) . ', Klasse: ' . strip_tags($old_entry['class']) . ', Fach: "' . strip_tags($old_entry['subject']) . '", Zusatzmaterialien: "' . strip_tags($old_entry['additional_material']) . '", Dauer: ' . strip_tags($old_entry['duration']) . ' Minuten, Lehrkraft: ' . ActToName($old_entry['teacher_act']),
+                            null, 'Nachschreibarbeiten');
+
                         Info('Nachschreiber_in erfolgreich eingetragen.');
                         js('window.close();');
                     } else {
@@ -60,7 +65,9 @@ if(!empty($_POST['action'])) {
                     }
                     $query = 'DELETE FROM mod_nachschreibarbeiten_dates WHERE id=' . qdb($_POST['id']);
                     if (db_query($query)) {
-                        log_insert('Nachschreibtermin ' . strip_tags($_POST['id']) . ' gelöscht.', null, 'Nachschreibarbeiten');
+                        log_insert('Nachschreibtermin ' . strip_tags($_POST['id']) . ' gelöscht. '
+                            . 'Alte Daten: ' . getLocalizedFormattedDate($old_date['date'], '%Y-%m-%d') . ' um ' . getLocalizedFormattedDate($old_date['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($old_date['teacher_act'])) . ' in Raum "' . strip_tags($old_date['room']) . '".',
+                            null, 'Nachschreibarbeiten');
                         Info('Nachschreibtermin erfolgreich gelöscht.');
                         js('window.close();');
                     } else {
@@ -75,7 +82,9 @@ if(!empty($_POST['action'])) {
                     }
                     $query = 'DELETE FROM mod_nachschreibarbeiten_entries WHERE id=' . qdb($_POST['id']);
                     if (db_query($query)) {
-                        log_insert('Nachschreiber_in ' . strip_tags($_POST['id']) . ' gelöscht.', null, 'Nachschreibarbeiten');
+                        log_insert('Nachschreiber_in ' . strip_tags($_POST['id']) . ' gelöscht.'
+                            . ' Alte Daten: ' . ActToName(strip_tags($old_entry['student_act'])) . ' für Termin ' . strip_tags($old_entry['date_id']) . ', Klasse: ' . strip_tags($old_entry['class']) . ', Fach: "' . strip_tags($old_entry['subject']) . '", Zusatzmaterialien: "' . strip_tags($old_entry['additional_material']) . '", Dauer: ' . strip_tags($old_entry['duration']) . ' Minuten, Lehrkraft: ' . ActToName($old_entry['teacher_act']),
+                            null, 'Nachschreibarbeiten');
                         Info('Nachschreiber_in erfolgreich gelöscht.');
                         js('window.close();');
                     } else {
