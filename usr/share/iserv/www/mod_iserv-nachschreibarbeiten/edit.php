@@ -7,7 +7,7 @@ require_once 'format.inc';
 require_once 'mod_iserv-nachschreibarbeiten/functions.php';
 db_user('nachschreibarbeiten');
 
-jquery_ui_head('combobox');
+jquery_ui_head('combobox, timepicker');
 css_include('style.css');
 PageBlue('Bearbeiten', 'manage');
 
@@ -138,7 +138,7 @@ switch($type) {
             ?>
             <form method="post" action="#">
                 <<?php echo $GLOBALS["padtbl"]; ?>>
-                <tr><td>Datum:</td><td><input type="date" name="date" value="<?php echo getLocalizedFormattedDate($date['date'], '%Y-%m-%d'); ?>" style="width: 200px;"></td></tr> <!-- TODO: Automatically pick the next Friday -->
+                <tr><td>Datum:</td><td><input type="text" name="date" class="date" value="<?php echo getLocalizedFormattedDate($date['date'], '%d.%m.%Y'); ?>" style="width: 200px;"></td></tr>
                 <tr><td>Uhrzeit:</td><td><input type="time" name="time" value="<?php echo $date['time']; ?>" style="width: 200px;"></td></tr>
                 <tr><td>Raum:</td><td><input type="text" name="room" value="<?php echo $date['room']; ?>" style="width: 200px;"></td></tr>
                 <tr><td>Betreuer:</td><td><?php echo $teacher_select; ?></td></tr>
@@ -204,4 +204,5 @@ switch($type) {
 }
 
 jquery_combobox();
+jquery_datetimepicker(false);
 _PageBlue();

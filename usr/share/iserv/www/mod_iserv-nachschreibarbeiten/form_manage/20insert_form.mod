@@ -15,7 +15,8 @@ $teacher_select = combo('teacher', $_SESSION['act'], $sel_teachers, array('width
 
 <form method="post" action="#">
 	<<?php echo $GLOBALS["padtbl"]; ?>>
-	<tr><td>Datum:</td><td><input type="date" name="date" value="<?php echo date('o-m-d'); ?>" style="width: 200px;"></td></tr> <!-- TODO: Automatically pick the next Friday -->
+	<!-- Ugh. Srsly? Using 'd.m.o' as a date format *interally*? Wow. -->
+	<tr><td>Datum:</td><td><input type="text" name="date" class="date" value="<?php echo date('d.m.o', strtotime('next friday')); ?>" style="width: 200px;"></td></tr>
 	<tr><td>Uhrzeit:</td><td><input type="time" name="time" value="14:00" style="width: 200px;"></td></tr>
 	<tr><td>Raum:</td><td><input type="text" name="room" value="151" style="width: 200px;"></td></tr>
 	<tr><td>Betreuer_in:</td><td><?php echo $teacher_select; ?></td></tr>

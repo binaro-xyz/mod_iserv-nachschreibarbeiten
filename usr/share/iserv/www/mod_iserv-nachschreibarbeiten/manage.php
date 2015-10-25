@@ -7,7 +7,7 @@ require_once 'format.inc';
 require_once 'db.inc';
 require_once 'mod_iserv-nachschreibarbeiten/functions.php';
 
-jquery_ui_head('combobox');
+jquery_ui_head('combobox, timepicker');
 css_include('style.css');
 PageBlue('Nachschreibtermine verwalten', 'manage');
 
@@ -22,4 +22,5 @@ if(!userIsAdmin()) {
 mountspc('form_manage');
 
 jquery_combobox();
+jquery_datetimepicker(false);
 _PageBlue();
