@@ -31,13 +31,13 @@ function isCollision($date, $student_act) {
 
 // Unfortunately, IServ doesn't seem to have a function that escapes values to be inserted into the DB (or I just can't find it...)
 // They do have a function qdb() that escapes a value and adds quotes around it (presumably for easier SELECT statements, their db_store() also inserts quotes though...)
-// We use this function here but remove the quotes with trim().
+// We use this function here but remove the quotes with trim(). We also strip all HTML from strings in the process using strip_tags()
 function escape($data) {
     require_once 'db.inc';
 
 	switch(gettype($data)) {
 		case 'string':
-            return trim(qdb($data), '\'');
+            return strip_tags(trim(qdb($data), '\''));
 			break;
 		default:
             return qdb($data);

@@ -16,7 +16,7 @@ if(!empty($_POST['date'])) {
 
     require_once 'sec/login.inc';
     if(db_store('mod_nachschreibarbeiten_dates', $data)) {
-        log_insert('Nachschreibtermin ' . strip_tags($_POST['date']) . ' um ' . strip_tags($_POST['time']) . ' mit Betreuer_in ' . ActToName(($_POST['teacher'])) . ' in Raum "' . strip_tags($_POST['room']) .  '" hinzugefügt', null, 'Nachschreibarbeiten');
+        log_insert('Nachschreibtermin ' . escape($_POST['date']) . ' um ' . escape($_POST['time']) . ' mit Betreuer_in ' . ActToName(($_POST['teacher'])) . ' in Raum "' . escape($_POST['room']) .  '" hinzugefügt', null, 'Nachschreibarbeiten');
         Info('Nachschreibtermin erfolgreich eingetragen.');
     }
     else {

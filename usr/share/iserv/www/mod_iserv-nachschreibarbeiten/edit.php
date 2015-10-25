@@ -23,11 +23,11 @@ if(!empty($_POST['action'])) {
                         die;
                     }
                     if (db_query($query)) {
-                        log_insert('Nachschreibtermin geändert. Neue Daten: ' . strip_tags($_POST['date']) . ' um ' . getLocalizedFormattedDate($_POST['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($_POST['teacher'])) . ' in Raum "' . strip_tags($_POST['room']) . '". '
-                            . 'Alte Daten: ' . getLocalizedFormattedDate($old_date['date'], '%Y-%m-%d') . ' um ' . getLocalizedFormattedDate($old_date['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($old_date['teacher_act'])) . ' in Raum "' . strip_tags($old_date['room']) . '".',
+                        log_insert('Nachschreibtermin geändert. Neue Daten: ' . escape($_POST['date']) . ' um ' . getLocalizedFormattedDate($_POST['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($_POST['teacher'])) . ' in Raum "' . escape($_POST['room']) . '". '
+                            . 'Alte Daten: ' . getLocalizedFormattedDate($old_date['date'], '%Y-%m-%d') . ' um ' . getLocalizedFormattedDate($old_date['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($old_date['teacher_act'])) . ' in Raum "' . escape($old_date['room']) . '".',
                             null, 'Nachschreibarbeiten');
                         Info('Nachschreibtermin erfolgreich eingetragen.');
-                        js('window.close();');
+                        js('window.opener.location.reload(); window.close();');
                     } else {
                         Error('Fehler beim Bearbeiten des Nachschreibtermins.<br><a href="javascript:window.close();">Schließen</a>');
                     }
@@ -40,12 +40,12 @@ if(!empty($_POST['action'])) {
                     }
                     $query = 'UPDATE mod_nachschreibarbeiten_entries SET date_id=' . qdb($_POST['date']) . ', student_act=' . qdb($_POST['student']) . ', class=' . qdb($_POST['student_class']) . ', subject=' . qdb($_POST['subject']) . ', additional_material=' . qdb($_POST['additional_material']) . ', duration=' . qdb($_POST['duration']) . ', teacher_act=' . qdb($_POST['teacher']) . ' WHERE id = ' . qdb($_POST['id']);
                     if (db_query($query)) {
-                        log_insert('Nachschreiber_in geändert. Neue Daten: ' . ActToName(strip_tags($_POST['student'])) . ' für Termin ' . strip_tags($_POST['date']) . ', Klasse: ' . strip_tags($_POST['student_class']) . ', Fach: "' . strip_tags($_POST['subject']) . '", Zusatzmaterialien: "' . strip_tags($_POST['additional_material']) . '", Dauer: ' . strip_tags($_POST['duration']) . ' Minuten, Lehrkraft: ' . ActToName($_POST['teacher']) . '.'
-                            . ' Alte Daten: ' . ActToName(strip_tags($old_entry['student_act'])) . ' für Termin ' . strip_tags($old_entry['date_id']) . ', Klasse: ' . strip_tags($old_entry['class']) . ', Fach: "' . strip_tags($old_entry['subject']) . '", Zusatzmaterialien: "' . strip_tags($old_entry['additional_material']) . '", Dauer: ' . strip_tags($old_entry['duration']) . ' Minuten, Lehrkraft: ' . ActToName($old_entry['teacher_act']),
+                        log_insert('Nachschreiber_in geändert. Neue Daten: ' . ActToName(escape($_POST['student'])) . ' für Termin ' . escape($_POST['date']) . ', Klasse: ' . escape($_POST['student_class']) . ', Fach: "' . escape($_POST['subject']) . '", Zusatzmaterialien: "' . escape($_POST['additional_material']) . '", Dauer: ' . escape($_POST['duration']) . ' Minuten, Lehrkraft: ' . ActToName($_POST['teacher']) . '.'
+                            . ' Alte Daten: ' . ActToName(escape($old_entry['student_act'])) . ' für Termin ' . escape($old_entry['date_id']) . ', Klasse: ' . escape($old_entry['class']) . ', Fach: "' . escape($old_entry['subject']) . '", Zusatzmaterialien: "' . escape($old_entry['additional_material']) . '", Dauer: ' . escape($old_entry['duration']) . ' Minuten, Lehrkraft: ' . ActToName($old_entry['teacher_act']),
                             null, 'Nachschreibarbeiten');
 
                         Info('Nachschreiber_in erfolgreich eingetragen.');
-                        js('window.close();');
+                        js('window.opener.location.reload(); window.close();');
                     } else {
                         Error('Fehler beim Bearbeiten der Nachschreiber_in.<br><a href="javascript:window.close();">Schließen</a>');
                     }
@@ -65,11 +65,11 @@ if(!empty($_POST['action'])) {
                     }
                     $query = 'DELETE FROM mod_nachschreibarbeiten_dates WHERE id=' . qdb($_POST['id']);
                     if (db_query($query)) {
-                        log_insert('Nachschreibtermin ' . strip_tags($_POST['id']) . ' gelöscht. '
-                            . 'Alte Daten: ' . getLocalizedFormattedDate($old_date['date'], '%Y-%m-%d') . ' um ' . getLocalizedFormattedDate($old_date['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($old_date['teacher_act'])) . ' in Raum "' . strip_tags($old_date['room']) . '".',
+                        log_insert('Nachschreibtermin ' . escape($_POST['id']) . ' gelöscht. '
+                            . 'Alte Daten: ' . getLocalizedFormattedDate($old_date['date'], '%Y-%m-%d') . ' um ' . getLocalizedFormattedDate($old_date['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($old_date['teacher_act'])) . ' in Raum "' . escape($old_date['room']) . '".',
                             null, 'Nachschreibarbeiten');
                         Info('Nachschreibtermin erfolgreich gelöscht.');
-                        js('window.close();');
+                        js('window.opener.location.reload(); window.close();');
                     } else {
                         Error('Fehler beim Löschen des Nachschreibtermins.<br><a href="javascript:window.close();">Schließen</a>');
                     }
@@ -82,11 +82,11 @@ if(!empty($_POST['action'])) {
                     }
                     $query = 'DELETE FROM mod_nachschreibarbeiten_entries WHERE id=' . qdb($_POST['id']);
                     if (db_query($query)) {
-                        log_insert('Nachschreiber_in ' . strip_tags($_POST['id']) . ' gelöscht.'
-                            . ' Alte Daten: ' . ActToName(strip_tags($old_entry['student_act'])) . ' für Termin ' . strip_tags($old_entry['date_id']) . ', Klasse: ' . strip_tags($old_entry['class']) . ', Fach: "' . strip_tags($old_entry['subject']) . '", Zusatzmaterialien: "' . strip_tags($old_entry['additional_material']) . '", Dauer: ' . strip_tags($old_entry['duration']) . ' Minuten, Lehrkraft: ' . ActToName($old_entry['teacher_act']),
+                        log_insert('Nachschreiber_in ' . escape($_POST['id']) . ' gelöscht.'
+                            . ' Alte Daten: ' . ActToName(escape($old_entry['student_act'])) . ' für Termin ' . escape($old_entry['date_id']) . ', Klasse: ' . escape($old_entry['class']) . ', Fach: "' . escape($old_entry['subject']) . '", Zusatzmaterialien: "' . escape($old_entry['additional_material']) . '", Dauer: ' . escape($old_entry['duration']) . ' Minuten, Lehrkraft: ' . ActToName($old_entry['teacher_act']),
                             null, 'Nachschreibarbeiten');
                         Info('Nachschreiber_in erfolgreich gelöscht.');
-                        js('window.close();');
+                        js('window.opener.location.reload(); window.close();');
                     } else {
                         Error('Fehler beim Löschen der Nachschreiber_in.<br><a href="javascript:window.close();">Schließen</a>');
                     }

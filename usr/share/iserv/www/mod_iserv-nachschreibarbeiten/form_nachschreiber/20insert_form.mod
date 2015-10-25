@@ -1,6 +1,6 @@
 <h1>Nachschreiber_in eintragen</h1>
 <?php
-
+require_once 'user.inc';
 if(!empty($_POST['date'])) {
     $date = db_getRow('SELECT * FROM mod_nachschreibarbeiten_dates WHERE id=' . qdb($_POST['date']));
     if($_POST['warned'] != 'true' && !isCollision($date['date'], $_POST['student'])) {
@@ -31,8 +31,12 @@ if(!empty($_POST['date'])) {
 
         require_once 'sec/login.inc';
         if($res = db_store('mod_nachschreibarbeiten_entries', $data)) {
-            log_insert('Nachschreiber_in für Termin ' . $data['date_id'] . ' hinzugefügt: ' . ActToName($_POST['student']) . ', Klasse: ' . strip_tags($data['class']) . ', Fach: "' . strip_tags($data['subject']) . '", Zusatzmaterialien: "' . strip_tags($data['additional_material']) . '", Dauer: ' . strip_tags($data['duration']) . ' Minuten, Lehrkraft: ' . ActToName($data['teacher_act']), null, 'Nachschreibarbeiten');
+            log_insert('Nachschreiber_in für Termin ' . $data['date_id'] . ' hinzugefügt: ' . ActToName($data['student_act']) . ', Klasse: ' . $data['class'] . ', Fach: "' . $data['subject'] . '", Zusatzmaterialien: "' . $data['additional_material'] . '", Dauer: ' . $data['duration'] . ' Minuten, Lehrkraft: ' . ActToName($data['teacher_act']), null, 'Nachschreibarbeiten');
             Info('Nachschreiber_in erfolgreich eingetragen.');
+
+            mail(user_mail_addr($data['student_act']), 'Nachschreibtermin im Fach ' . $data['subject'] . ' eingetragen',
+                "Ein neuer Nachschreibtermin wurde für Sie eingetragen.\r\n\r\nSie schreiben eine Arbeit im Fach {$data['subject']} nach. Die Nachschreibarbeit wird {$data['duration']} Minuten dauern." . (trim($data['additional_material']) == '' ? '' : ' Sie dürfen folgende Zusatzmaterialien verwenden: ' . $data['additional_material']) . "\r\nTermin: " . getLocalizedFormattedDate($date['date'], '%d. %B %Y') . ' um ' . getLocalizedFormattedDate($date['time'], '%H:%M') . " in Raum {$date['room']}, betreut von " . ActToName($date['teacher_act']) . "\r\n\r\n*Diese E-Mail wurde automatisch generiert*",
+                "From: " . user_mail_addr() . "\r\nX-IServ-Module: Nachschreibarbeiten");
         }
         else {
             Error('Fehler beim Eintragen der Nachschreiber_in.');
