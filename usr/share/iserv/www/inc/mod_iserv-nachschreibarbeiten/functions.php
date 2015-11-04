@@ -29,6 +29,36 @@ function isCollision($date, $student_act) {
     return $conflicts['day_count'] < 1 && $conflicts['week_count'] < 3 && $conflicts['entry_count'] < 1;
 }
 
+// returns true if teacher_act exists in database
+function validateTeacherAct($teacher_act) {
+    $existing_acts = db_getAll(
+      'SELECT u.act, user_join_name(u.firstname, u.lastname)
+   FROM users u
+	 JOIN members m ON m.actuser = u.act
+	 JOIN groups_priv p ON p.act = m.actgrp
+   WHERE u.deleted IS NULL
+	 AND p.privilege IN (\'mod_nachschreibarbeiten_access\', \'mod_nachschreibarbeiten_admin\')
+	 AND u.act = ' . qdb($teacher_act) . '
+   ORDER BY u.act'
+    );
+    return count($existing_acts) > 0;
+}
+
+// returns true if student_act exists in database
+function validateStudentAct($student_act) {
+    $existing_acts = db_getAll(
+      'SELECT u.act, user_join_name(u.firstname, u.lastname)
+   FROM users u
+	 JOIN members m ON m.actuser = u.act
+	 JOIN groups_priv p ON p.act = m.actgrp
+   WHERE u.deleted IS NULL
+	 AND p.privilege IN (\'exam_plan_do\')
+	 AND u.act = ' . qdb($student_act) . '
+   ORDER BY u.act'
+    );
+    return count($existing_acts) > 0;
+}
+
 // Unfortunately, IServ doesn't seem to have a function that escapes values to be inserted into the DB (or I just can't find it...)
 // They do have a function qdb() that escapes a value and adds quotes around it (presumably for easier SELECT statements, their db_store() also inserts quotes though...)
 // We use this function here but remove the quotes with trim(). We also strip all HTML from strings in the process using strip_tags()

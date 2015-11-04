@@ -2,9 +2,11 @@
 <?php
 require_once 'user.inc';
 if(!empty($_POST['date'])) {
-    $date = db_getRow('SELECT * FROM mod_nachschreibarbeiten_dates WHERE id=' . qdb($_POST['date']));
-    if($_POST['warned'] != 'true' && !isCollision($date['date'], $_POST['student'])) {
-        echo '<div class="warn" style="text-align: center; margin: 10px;">' . icon('dlg-warn') . '<strong>Achtung!</strong> Für die Schüler_in ' . ActToName($_POST['student']) . ' sind schon 3 Klausuren für diese Woche oder 1 Klausur an diesem Tag eingetragen!<br>
+    if(validateStudentAct($_POST['student']) && validateTeacherAct($_POST['teacher'])) {
+      if($_POST['duration'] >= 0 && $_POST['duration'] <= 90) {
+        $date = db_getRow('SELECT * FROM mod_nachschreibarbeiten_dates WHERE id=' . qdb($_POST['date']));
+        if ($_POST['warned'] != 'true' && !isCollision($date['date'], $_POST['student'])) {
+          echo '<div class="warn" style="text-align: center; margin: 10px;">' . icon('dlg-warn') . '<strong>Achtung!</strong> Für die Schüler_in ' . ActToName($_POST['student']) . ' sind schon 3 Klausuren für diese Woche oder 1 Klausur an diesem Tag eingetragen!<br>
         <form method="post" action="#">
             <input type="hidden" name="date" value="' . strip_tags($_POST['date']) . '">
             <input type="hidden" name="student" value="' . strip_tags($_POST['student']) . '">
@@ -17,8 +19,9 @@ if(!empty($_POST['date'])) {
             <input type="submit" value="Dennoch eintragen">
         </form>
         </div>';
-    } else {
-        $data = array(
+        }
+        else {
+          $data = array(
             'date_id' => escape($_POST['date']),
             'student_act' => escape($_POST['student']),
             'class' => escape($_POST['student_class']),
@@ -27,20 +30,26 @@ if(!empty($_POST['date'])) {
             'duration' => escape($_POST['duration']),
             'teacher_act' => escape($_POST['teacher']),
             'created_by_act' => escape($_SESSION['act'])
-        );
+          );
 
-        require_once 'sec/login.inc';
-        if($res = db_store('mod_nachschreibarbeiten_entries', $data)) {
-            log_insert('Nachschreiber_in für Termin ' . $data['date_id'] . ' hinzugefügt: ' . ActToName($data['student_act']) . ', Klasse: ' . $data['class'] . ', Fach: "' . $data['subject'] . '", Zusatzmaterialien: "' . $data['additional_material'] . '", Dauer: ' . $data['duration'] . ' Minuten, Lehrkraft: ' . ActToName($data['teacher_act']), null, 'Nachschreibarbeiten');
+          require_once 'sec/login.inc';
+          if ($res = db_store('mod_nachschreibarbeiten_entries', $data)) {
+            log_insert('Nachschreiber_in für Termin ' . $data['date_id'] . ' hinzugefügt: ' . ActToName($data['student_act']) . ', Klasse: ' . $data['class'] . ', Fach: "' . $data['subject'] . '", Zusatzmaterialien: "' . $data['additional_material'] . '", Dauer: ' . $data['duration'] . ' Minuten, Lehrkraft: ' . ActToName($data['teacher_act']), NULL, 'Nachschreibarbeiten');
             Info('Nachschreiber_in erfolgreich eingetragen.');
 
             mail(user_mail_addr($data['student_act']), 'Nachschreibtermin im Fach ' . $data['subject'] . ' eingetragen',
-                "Ein neuer Nachschreibtermin wurde für Sie eingetragen.\r\n\r\nSie schreiben eine Arbeit im Fach {$data['subject']} nach. Die Nachschreibarbeit wird {$data['duration']} Minuten dauern." . (trim($data['additional_material']) == '' ? '' : ' Sie dürfen folgende Zusatzmaterialien verwenden: ' . $data['additional_material']) . "\r\nTermin: " . getLocalizedFormattedDate($date['date'], '%d. %B %Y') . ' um ' . getLocalizedFormattedDate($date['time'], '%H:%M') . " in Raum {$date['room']}, betreut von " . ActToName($date['teacher_act']) . "\r\n\r\n*Diese E-Mail wurde automatisch generiert*",
-                "From: " . user_mail_addr() . "\r\nX-IServ-Module: Nachschreibarbeiten");
-        }
-        else {
+              "Ein neuer Nachschreibtermin wurde für Sie eingetragen.\r\n\r\nSie schreiben eine Arbeit im Fach {$data['subject']} nach. Die Nachschreibarbeit wird {$data['duration']} Minuten dauern." . (trim($data['additional_material']) == '' ? '' : ' Sie dürfen folgende Zusatzmaterialien verwenden: ' . $data['additional_material']) . "\r\nTermin: " . getLocalizedFormattedDate($date['date'], '%d. %B %Y') . ' um ' . getLocalizedFormattedDate($date['time'], '%H:%M') . " in Raum {$date['room']}, betreut von " . ActToName($date['teacher_act']) . "\r\n\r\n*Diese E-Mail wurde automatisch generiert*",
+              "From: " . user_mail_addr() . "\r\nX-IServ-Module: Nachschreibarbeiten");
+          }
+          else {
             Error('Fehler beim Eintragen der Nachschreiber_in.');
+          }
         }
+      } else {
+        echo '<div class="warn" style="text-align: center; margin: 10px;">' . icon('dlg-warn') . '<strong>Falsche Dauer!</strong> Bitte wählen Sie eine Dauer zwischen 0 und 90 Minuten.</div>';
+      }
+    } else {
+      echo '<div class="warn" style="text-align: center; margin: 10px;">' . icon('dlg-warn') . '<strong>Falsche Eingabe!</strong> Die eingegebene Lehrer_in oder Schüler_in existiert nicht.</div>';
     }
 }
 
@@ -82,7 +91,7 @@ $dates = db_getAll('SELECT * FROM mod_nachschreibarbeiten_dates WHERE date >= cu
   <tr><td>Klasse:</td><td><input type="text" name="student_class" style="width: 200px;"></td></tr> <!-- Note: Unfortunately, IServ doesn't know the class of a student -->
   <tr><td>Fach:</td><td><input type="text" name="subject" style="width: 200px;"></td></tr>
   <tr><td>Zusatzmaterialien:</td><td><input type="text" name="additional_material" style="width: 200px;"></td></tr>
-  <tr><td>Dauer (in Minuten):</td><td><input type="number" name="duration" value="45" style="width: 200px;"></td></tr>
+  <tr><td>Dauer (in Minuten):</td><td><input type="number" name="duration" value="45" min="0" max="95" style="width: 200px;"></td></tr>
   <tr><td>Lehrkraft:</td><td><?php echo $teacher_select; ?></td></tr>
 </table>
     <input type="hidden" name="warned" value="false">

@@ -16,38 +16,52 @@ if(!empty($_POST['action'])) {
         case 'update':
             switch ($_POST['type']) {
                 case 'date':
-                    $query = 'UPDATE mod_nachschreibarbeiten_dates SET date=' . qdb($_POST['date']) . ', time=' . qdb($_POST['time']) . ', room=' . qdb($_POST['room']) . ', teacher_act=' . qdb($_POST['teacher']) . ' WHERE id=' . qdb($_POST['id']);
-                    $old_date = db_getRow('SELECT * FROM mod_nachschreibarbeiten_dates WHERE id = ' . qdb($_POST['id']));
-                    if(!userCanEdit($old_date)) {
-                        Error('Sie haben keine Berechtigung, diesen Nachschreibtermin zu bearbeiten.');
-                        die;
-                    }
-                    if (db_query($query)) {
-                        log_insert('Nachschreibtermin geändert. Neue Daten: ' . escape($_POST['date']) . ' um ' . getLocalizedFormattedDate($_POST['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($_POST['teacher'])) . ' in Raum "' . escape($_POST['room']) . '". '
-                            . 'Alte Daten: ' . getLocalizedFormattedDate($old_date['date'], '%Y-%m-%d') . ' um ' . getLocalizedFormattedDate($old_date['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($old_date['teacher_act'])) . ' in Raum "' . escape($old_date['room']) . '".',
-                            null, 'Nachschreibarbeiten');
-                        Info('Nachschreibtermin erfolgreich eingetragen.');
-                        js('window.opener.location.reload(); window.close();');
+                    if(validateTeacherAct($_POST['teacher'])) {
+                        $query = 'UPDATE mod_nachschreibarbeiten_dates SET date=' . qdb($_POST['date']) . ', time=' . qdb($_POST['time']) . ', room=' . qdb($_POST['room']) . ', teacher_act=' . qdb($_POST['teacher']) . ' WHERE id=' . qdb($_POST['id']);
+                        $old_date = db_getRow('SELECT * FROM mod_nachschreibarbeiten_dates WHERE id = ' . qdb($_POST['id']));
+                        if (!userCanEdit($old_date)) {
+                            Error('Sie haben keine Berechtigung, diesen Nachschreibtermin zu bearbeiten.');
+                            die;
+                        }
+                        if (db_query($query)) {
+                            log_insert('Nachschreibtermin geändert. Neue Daten: ' . escape($_POST['date']) . ' um ' . getLocalizedFormattedDate($_POST['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($_POST['teacher'])) . ' in Raum "' . escape($_POST['room']) . '". '
+                              . 'Alte Daten: ' . getLocalizedFormattedDate($old_date['date'], '%Y-%m-%d') . ' um ' . getLocalizedFormattedDate($old_date['time'], '%H:%M') . ' mit Betreuer_in ' . ActToName(($old_date['teacher_act'])) . ' in Raum "' . escape($old_date['room']) . '".',
+                              NULL, 'Nachschreibarbeiten');
+                            Info('Nachschreibtermin erfolgreich eingetragen.');
+                            js('window.opener.location.reload(); window.close();');
+                        }
+                        else {
+                            Error('Fehler beim Bearbeiten des Nachschreibtermins.<br><a href="javascript:window.close();">Schließen</a>');
+                        }
                     } else {
-                        Error('Fehler beim Bearbeiten des Nachschreibtermins.<br><a href="javascript:window.close();">Schließen</a>');
+                        echo '<div class="warn" style="text-align: center; margin: 10px;">' . icon('dlg-warn') . '<strong>Falsche Eingabe!</strong> Die eingegebene Lehrer_in existiert nicht.</div>';
                     }
                     break;
                 case 'entry':
-                    $old_entry = db_getRow('SELECT * FROM mod_nachschreibarbeiten_entries WHERE id = ' . qdb($_POST['id']));
-                    if(!userCanEdit($old_entry)) {
-                        Error('Sie haben keine Berechtigung, diese Nachschreiber_in zu bearbeiten.');
-                        die;
-                    }
-                    $query = 'UPDATE mod_nachschreibarbeiten_entries SET date_id=' . qdb($_POST['date']) . ', student_act=' . qdb($_POST['student']) . ', class=' . qdb($_POST['student_class']) . ', subject=' . qdb($_POST['subject']) . ', additional_material=' . qdb($_POST['additional_material']) . ', duration=' . qdb($_POST['duration']) . ', teacher_act=' . qdb($_POST['teacher']) . ' WHERE id = ' . qdb($_POST['id']);
-                    if (db_query($query)) {
-                        log_insert('Nachschreiber_in geändert. Neue Daten: ' . ActToName(escape($_POST['student'])) . ' für Termin ' . escape($_POST['date']) . ', Klasse: ' . escape($_POST['student_class']) . ', Fach: "' . escape($_POST['subject']) . '", Zusatzmaterialien: "' . escape($_POST['additional_material']) . '", Dauer: ' . escape($_POST['duration']) . ' Minuten, Lehrkraft: ' . ActToName($_POST['teacher']) . '.'
-                            . ' Alte Daten: ' . ActToName(escape($old_entry['student_act'])) . ' für Termin ' . escape($old_entry['date_id']) . ', Klasse: ' . escape($old_entry['class']) . ', Fach: "' . escape($old_entry['subject']) . '", Zusatzmaterialien: "' . escape($old_entry['additional_material']) . '", Dauer: ' . escape($old_entry['duration']) . ' Minuten, Lehrkraft: ' . ActToName($old_entry['teacher_act']),
-                            null, 'Nachschreibarbeiten');
+                    if(validateStudentAct($_POST['student']) && validateTeacherAct($_POST['teacher'])) {
+                        $old_entry = db_getRow('SELECT * FROM mod_nachschreibarbeiten_entries WHERE id = ' . qdb($_POST['id']));
+                        if (!userCanEdit($old_entry)) {
+                            Error('Sie haben keine Berechtigung, diese Nachschreiber_in zu bearbeiten.');
+                            die;
+                        }
+                        if($_POST['duration'] >= 0 && $_POST['duration'] <= 90) {
+                            $query = 'UPDATE mod_nachschreibarbeiten_entries SET date_id=' . qdb($_POST['date']) . ', student_act=' . qdb($_POST['student']) . ', class=' . qdb($_POST['student_class']) . ', subject=' . qdb($_POST['subject']) . ', additional_material=' . qdb($_POST['additional_material']) . ', duration=' . qdb($_POST['duration']) . ', teacher_act=' . qdb($_POST['teacher']) . ' WHERE id = ' . qdb($_POST['id']);
+                            if (db_query($query)) {
+                                log_insert('Nachschreiber_in geändert. Neue Daten: ' . ActToName(escape($_POST['student'])) . ' für Termin ' . escape($_POST['date']) . ', Klasse: ' . escape($_POST['student_class']) . ', Fach: "' . escape($_POST['subject']) . '", Zusatzmaterialien: "' . escape($_POST['additional_material']) . '", Dauer: ' . escape($_POST['duration']) . ' Minuten, Lehrkraft: ' . ActToName($_POST['teacher']) . '.'
+                                  . ' Alte Daten: ' . ActToName(escape($old_entry['student_act'])) . ' für Termin ' . escape($old_entry['date_id']) . ', Klasse: ' . escape($old_entry['class']) . ', Fach: "' . escape($old_entry['subject']) . '", Zusatzmaterialien: "' . escape($old_entry['additional_material']) . '", Dauer: ' . escape($old_entry['duration']) . ' Minuten, Lehrkraft: ' . ActToName($old_entry['teacher_act']),
+                                  NULL, 'Nachschreibarbeiten');
 
-                        Info('Nachschreiber_in erfolgreich eingetragen.');
-                        js('window.opener.location.reload(); window.close();');
+                                Info('Nachschreiber_in erfolgreich eingetragen.');
+                                js('window.opener.location.reload(); window.close();');
+                            }
+                            else {
+                                Error('Fehler beim Bearbeiten der Nachschreiber_in.<br><a href="javascript:window.close();">Schließen</a>');
+                            }
+                        } else {
+                            echo '<div class="warn" style="text-align: center; margin: 10px;">' . icon('dlg-warn') . '<strong>Falsche Dauer!</strong> Bitte wählen Sie eine Dauer zwischen 0 und 90 Minuten.</div>';
+                        }
                     } else {
-                        Error('Fehler beim Bearbeiten der Nachschreiber_in.<br><a href="javascript:window.close();">Schließen</a>');
+                        echo '<div class="warn" style="text-align: center; margin: 10px;">' . icon('dlg-warn') . '<strong>Falsche Eingabe!</strong> Die eingegebene Lehrer_in oder Schüler_in existiert nicht.</div>';
                     }
                     break;
                 default:
@@ -178,7 +192,7 @@ switch($type) {
                 <tr><td>Klasse:</td><td><input type="text" name="student_class" value="<?php echo $entry['class']; ?>" style="width: 200px;"></td></tr>
                 <tr><td>Fach:</td><td><input type="text" name="subject" value="<?php echo $entry['subject']; ?>" style="width: 200px;"></td></tr>
                 <tr><td>Zusatzmaterialien:</td><td><input type="text" name="additional_material" value="<?php echo $entry['additional_material']; ?>" style="width: 200px;"></td></tr>
-                <tr><td>Dauer (in Minuten):</td><td><input type="number" name="duration" value="<?php echo $entry['duration']; ?>" style="width: 200px;"></td></tr>
+                <tr><td>Dauer (in Minuten):</td><td><input type="number" name="duration" value="<?php echo $entry['duration']; ?>" min="0" max="95" style="width: 200px;"></td></tr>
                 <tr><td>Lehrkraft:</td><td><?php echo $teacher_select; ?></td></tr>
                 </table>
                 <input type="hidden" name="id" value="<?php echo $entry['id']; ?>">
