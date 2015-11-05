@@ -1,9 +1,0 @@
-# Dependencies
-This IServ module depends on the 'exam_plan' module supplied by IServ. If 'exam_plan' is not installed, iservchk will report an error and this module will not function properly.
-
-# Installation
-To install this module, just copy all files from this directory to your IServ server into the directory /usr/share/iserv. Then run iservchk to apply all relevant settings.
-
-# Privileges
-This module adds two new privileges that need to be assigned to the appropriate groups in order for the module to be usable: 'mod_nachschreibarbeiten_access' (which allows access to
-the module, generally assigned to all teachers) and 'mod_nachschreibarbeiten_admin' (which allows the user to administer the module, generally assigned to a dedicated group).
