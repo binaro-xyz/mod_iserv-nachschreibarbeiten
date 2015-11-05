@@ -91,7 +91,7 @@ $dates = db_getAll('SELECT * FROM mod_nachschreibarbeiten_dates WHERE date >= cu
   <tr><td>Klasse:</td><td><input type="text" name="student_class" style="width: 200px;"></td></tr> <!-- Note: Unfortunately, IServ doesn't know the class of a student -->
   <tr><td>Fach:</td><td><input type="text" name="subject" style="width: 200px;"></td></tr>
   <tr><td>Zusatzmaterialien:</td><td><input type="text" name="additional_material" style="width: 200px;"></td></tr>
-  <tr><td>Dauer (in Minuten):</td><td><input type="number" name="duration" value="45" min="0" max="95" style="width: 200px;"></td></tr>
+  <tr><td>Dauer (in Minuten):</td><td><input type="number" name="duration" value="45" min="0" max="90" style="width: 200px;"></td></tr>
   <tr><td>Lehrkraft:</td><td><?php echo $teacher_select; ?></td></tr>
 </table>
     <input type="hidden" name="warned" value="false">
