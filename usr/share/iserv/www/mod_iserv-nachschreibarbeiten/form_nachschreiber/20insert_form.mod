@@ -17,6 +17,7 @@ if(!empty($_POST['date'])) {
             <input type="hidden" name="teacher" value="' . strip_tags($_POST['teacher']) . '">
             <input type="hidden" name="warned" value="true">
             <input type="submit" value="Dennoch eintragen">
+            <input type="button" value="Abbrechen" onclick="location.href=\'index.php\'">
         </form>
         </div>';
         }
